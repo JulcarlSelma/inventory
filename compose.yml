@@ -1,46 +1,18 @@
 services:
-    nginx:
-        build:
-            context: .
-            dockerfile: ./infra/nginx/Dockerfile
-        ports: 
-            - "80:80"
-        volumes:
-            - type: bind
-              source: ./php/
-              target: /var/www/html
-              consistency: cached
-        depends_on:
-            - php
-    php:
-        build:
-            context: .
-            dockerfile: ./infra/php/Dockerfile
-        ports:
-            - "9000:9000"
-        env_file:
-            - ./php/.env.local
-        volumes:
-            - type: bind
-              source: ./php/
-              target: /var/www/html
-              consistency: cached
-    node: 
-        build:
-            context: .
-            dockerfile: ./infra/node/Dockerfile
-        ports:
-            - "3000:3000"
-        environment:
-            - NODE_ENV=development
-        volumes:
-            - type: bind
-              source: ./node
-              target: /app
-              consistency: cached
-            - type: volume
-              source: node-module-volume
-              target: /app/node_modules
+  php:
+    build:
+      context: .
+      dockerfile: ./infra/php/Dockerfile
+    container_name: php
+    ports:
+      - "8000:8000"
+      - "5173:5173"
+    volumes:
+      - ./php:/var/www/html
+      - node_modules_volume:/var/www/html/node_modules
+      - vendor_volume:/var/www/html/vendor
 volumes:
-    node-module-volume:
-        driver: local
+  node_modules_volume:
+    driver: local
+  vendor_volume:
+    driver: local

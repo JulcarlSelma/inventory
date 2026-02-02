@@ -12,9 +12,9 @@ class CategoryService extends BaseService
         $this->repository = new CategoryRepository();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        return $this->repository->all();
+        return $this->repository->all($params);
     }
 
     public function create($params)

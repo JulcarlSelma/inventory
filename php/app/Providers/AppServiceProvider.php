@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Helpers\PageHelper;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::share('pageHelper', app(PageHelper::class));
+        Blade::component('components.card-component','card');
+        Blade::component('components.modal-component','modal');
+        Blade::component('components.category-form-component','category-form');
+        Blade::component('components.category-delete-component','category-delete');
+        Blade::component('components.button-component','button');
     }
 }

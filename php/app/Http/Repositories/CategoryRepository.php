@@ -14,11 +14,14 @@ class CategoryRepository extends BaseRepository
         $this->model = new Category();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
         try {
-            $data = $this->model->get();
-            return $this->success($data, 'Succesfully fetched categories');
+            $query = $this->model;
+            if (!empty($params) && isset($params['name'])) {
+                $query = $query->where('name', 'like', '%'.$params['name'].'%');
+            }
+            return $query->paginate(5)->withQueryString();
         } catch (Exception $e) {
             return $this->error($e->getMessage(), [], $this->internalServerError);
         }

@@ -1,48 +1,49 @@
-FROM php:8.4-fpm
+FROM php:8.3-fpm
 
 COPY ./infra/php/php.ini /usr/local/etc/php/php.ini
 
-RUN apt-get update \
-    && apt-get -y install git zip unzip vim libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+RUN apt-get update && apt-get install -y \
+    git \
+    zip \
+    unzip \
+    vim \
+    ca-certificates \
+    net-tools \
+    libgmp-dev \
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    make \
+    python3 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install gmp \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo_mysql
 
-###########################################################################
-# ImageMagick:
-###########################################################################
+# Install Node.js LTS + npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g concurrently
 
-ARG INSTALL_IMAGEMAGICK=true
-ARG IMAGEMAGICK_VERSION=latest
-ENV IMAGEMAGICK_VERSION ${IMAGEMAGICK_VERSION}
 
-RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-    apt-get install -yqq libmagickwand-dev imagemagick && \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-    cd /tmp && \
-    if [ ${IMAGEMAGICK_VERSION} = "latest" ]; then \
-    git clone https://github.com/Imagick/imagick; \
-    else \
-    git clone --branch ${IMAGEMAGICK_VERSION} https://github.com/Imagick/imagick; \
-    fi && \
-    cd imagick && \
-    phpize && \
-    ./configure && \
-    make && \
-    make install && \
-    rm -r /tmp/imagick; \
-    else \
-    pecl install imagick; \
-    fi && \
-    docker-php-ext-enable imagick; \
-    php -m | grep -q 'imagick' \
-    ;fi
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN docker-php-ext-install pdo_mysql
+# Verify
+RUN node -v && npm -v && npx -v
 
-# Update the ImageMagick policy.xml file to allow PDF operations
-RUN sed -i 's/<policy domain="coder" rights="none" pattern="PDF"/<policy domain="coder" rights="read|write" pattern="PDF"/g' /etc/ImageMagick-6/policy.xml || \
-    sed -i 's/<policy domain="coder" rights="none" pattern="PDF"/<policy domain="coder" rights="read|write" pattern="PDF"/g' /etc/ImageMagick-7/policy.xml
-
-RUN cd /usr/bin && curl -s http://getcomposer.org/installer | php && ln -s /usr/bin/composer.phar /usr/bin/composer
+# Copy app code to /var/www/html
+COPY ./php /var/www/html
 
 WORKDIR /var/www/html
+
+# Expose ports
+EXPOSE 8000 5173
+
+# Install npm dependencies
+RUN npm install
+
+# Install PHP dependencies
+RUN composer install
+
+CMD ["composer", "run", "dev"]

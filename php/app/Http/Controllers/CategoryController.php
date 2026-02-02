@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Services\CategoryService;
 use App\Http\Requests\CategoryRequest;
 
@@ -17,9 +18,12 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return $this->service->all();
+        $params = $request->all();
+        $data = $this->service->all($params);
+
+        return view('categories.index', compact('data'));
     }
 
     /**
@@ -28,7 +32,9 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
         $params = $request->validated();
-        return $this->service->create($params);
+        $this->service->create($params);
+
+        return redirect()->route('category.index');
     }
 
     /**
@@ -37,7 +43,9 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, $id)
     {
         $params = $request->validated();
-        return $this->service->update($id, $params);
+        $this->service->update($id, $params);
+
+        return redirect()->route('category.index');
     }
 
     /**
@@ -45,6 +53,8 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        return $this->service->delete($id);
+        $this->service->delete($id);
+
+        return redirect()->route('category.index');
     }
 }
