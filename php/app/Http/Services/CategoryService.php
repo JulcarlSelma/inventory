@@ -31,4 +31,9 @@ class CategoryService extends BaseService
     {
         return $this->repository->delete($id);
     }
+
+    public function dropdown()
+    {
+        return $this->repository->dropdown();
+    }
 }

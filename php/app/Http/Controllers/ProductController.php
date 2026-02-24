@@ -2,25 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Services\ProductService;
+use App\Http\Services\CategoryService;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
     protected $service;
+    protected $services = [];
 
     public function __construct()
     {
-        $this->service = new ProductService();
+        $this->services = [
+            'product' => new ProductService(),
+            'category' => new CategoryService()
+        ];
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return $this->service->all();
+        $params = $request->all();
+        $data = $this->services['product']->all($params);
+        $dropdown = $this->services['category']->dropdown();
+        return view('products.index', compact('data', 'dropdown'));
     }
 
     /**
@@ -29,7 +38,8 @@ class ProductController extends Controller
     public function store(CreateProductRequest $request)
     {
         $params = $request->validated();
-        return $this->service->create($params);
+        $this->services['product']->create($params);
+        return redirect()->route('product.index');
     }
 
     /**
@@ -37,7 +47,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return $this->service->find($id);
+        return $this->services['product']->find($id);
     }
 
     /**
@@ -46,7 +56,8 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         $params = $request->validated();
-        return $this->service->update($id, $params);
+        $this->services['product']->update($id, $params);
+        return redirect()->route('product.index');
     }
 
     /**
@@ -54,6 +65,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        return $this->service->delete($id);
+        $this->services['product']->delete($id);
+        return redirect()->route('product.index');
     }
 }

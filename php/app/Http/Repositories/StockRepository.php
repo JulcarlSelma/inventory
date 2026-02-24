@@ -5,7 +5,7 @@ namespace App\Http\Repositories;
 use DB;
 use Exception;
 use App\Models\Stock;
-use App\Repositories\BaseRepository;
+use App\Http\Repositories\BaseRepository;
 
 class StockRepository extends BaseRepository
 {

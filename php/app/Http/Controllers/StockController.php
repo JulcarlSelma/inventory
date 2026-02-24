@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Stock;
 use App\Http\Requests\StockRequest;
-use App\Http\Service\StockService;
+use App\Http\Services\StockService;
 
 class StockController extends Controller
 {

@@ -38,7 +38,7 @@ COPY ./php /var/www/html
 WORKDIR /var/www/html
 
 # Expose ports
-EXPOSE 8000 5173
+EXPOSE 9000 5173
 
 # Install npm dependencies
 RUN npm install

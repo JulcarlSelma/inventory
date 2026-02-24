@@ -3,9 +3,9 @@ services:
     build:
       context: .
       dockerfile: ./infra/php/Dockerfile
-    container_name: php
+    container_name: php-inventory
     ports:
-      - "8000:8000"
+      - "9000:9000"
       - "5173:5173"
     volumes:
       - ./php:/var/www/html

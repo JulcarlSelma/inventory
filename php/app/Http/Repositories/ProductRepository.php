@@ -13,11 +13,17 @@ class ProductRepository extends BaseRepository {
         $this->model = new Product();
     }
 
-    public function all($paginate = 10)
+    public function all(array $params = [])
     {
         try {
-            $data = $this->model->with('category')->paginate($paginate);
-            return $this->success($data, 'Data from page #'.$data->currentPage());
+            $query = $this->model;
+            
+            if (!empty($params) && isset($params['name'])) {
+                $query = $query->where('name', 'like', '%'.$params['name'].'%');
+            }
+
+            $query->with('category');
+            return $query->paginate(5)->withQueryString();
         } catch (Exception $e) {
             return $this->error($e->getMessage(), [], $this->internalServerError);
         }

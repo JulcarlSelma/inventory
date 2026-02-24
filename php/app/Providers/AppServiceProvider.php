@@ -25,8 +25,10 @@ class AppServiceProvider extends ServiceProvider
         View::share('pageHelper', app(PageHelper::class));
         Blade::component('components.card-component','card');
         Blade::component('components.modal-component','modal');
+        Blade::component('components.button-component','button');
         Blade::component('components.category-form-component','category-form');
         Blade::component('components.category-delete-component','category-delete');
-        Blade::component('components.button-component','button');
+        Blade::component('components.product-form-component','product-form');
+        Blade::component('components.product-delete-component','product-delete');
     }
 }

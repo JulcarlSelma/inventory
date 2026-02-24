@@ -14,6 +14,15 @@ class CategoryRepository extends BaseRepository
         $this->model = new Category();
     }
 
+    public function dropdown()
+    {
+        try {
+            return $this->model->get();
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), [], $this->internalServerError);
+        }
+    }
+
     public function all(array $params = [])
     {
         try {

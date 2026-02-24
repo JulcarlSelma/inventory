@@ -12,9 +12,9 @@ class ProductService extends BaseService
         $this->repository = new ProductRepository();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        return $this->repository->all();
+        return $this->repository->all($params);
     }
 
     public function find($id)
