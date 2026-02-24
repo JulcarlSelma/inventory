@@ -13,6 +13,10 @@ class PageHelper
                 return 'Categories';
             case 'stock.index':
                 return 'Stocks';
+            case 'product.index':
+                return 'Products';
+            case 'inventory.index':
+                return 'Inventory';
             
             default:
                 return 'dashboard';
