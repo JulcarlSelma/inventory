@@ -29,6 +29,11 @@ class ProductRepository extends BaseRepository {
         }
     }
 
+    public function getProductStocks()
+    {
+        return $this->model->all();
+    }
+
     public function find($id)
     {
         try {

@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
-    protected $service;
     protected $services = [];
 
     public function __construct()

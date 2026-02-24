@@ -14,14 +14,24 @@ class StockRepository extends BaseRepository
         $this->model = new Stock();
     }
 
-    public function all($paginate = 10)
+    public function all(array $params = [])
     {
         try {
-            $data = $this->model->with('product.category')->paginate($paginate);
-            return $this->success($data, 'Data from page #'.$data->currentPage());
+            $query = $this->model->with('product.category');
+            
+            if (!empty($params) && isset($params['name'])) {
+                $query = $query->where('name', 'like', '%'.$params['name'].'%');
+            }
+
+            return $query->paginate(5)->withQueryString();
         } catch (Exception $e) {
             return $this->error($e->getMessage(), [], $this->internalServerError);
         }
+    }
+
+    public function getAll()
+    {
+        return $this->model->all();
     }
 
     public function find($id)

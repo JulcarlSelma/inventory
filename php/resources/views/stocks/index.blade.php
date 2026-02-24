@@ -19,7 +19,7 @@
             <form method="GET" class="w-full flex flex-row items-end justify-between gap-3">
                 <div class="w-full">
                     <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Name</label>
-                    <input type="text" autocomplete name="name" name="name" value="{{old('name')}}" class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
+                    <input type="text" id="name" name="name" value="{{old('name')}}" class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
                 </div>
                 <div class="w-full">
                     <label for="category" class="block mb-2.5 text-sm font-medium text-heading">Category</label>
@@ -56,19 +56,16 @@
                                 Product name
                             </th>
                             <th scope="col" class="px-6 py-3 font-medium">
-                                Description
-                            </th>
-                            <th scope="col" class="px-6 py-3 font-medium">
-                                SKU
-                            </th>
-                            <th scope="col" class="px-6 py-3 font-medium">
-                                Cost Price
-                            </th>
-                            <th scope="col" class="px-6 py-3 font-medium">
-                                Selling Price
-                            </th>
-                            <th scope="col" class="px-6 py-3 font-medium">
                                 Category
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Count
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Stocked Date
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Out of stock
                             </th>
                             <th scope="col" class="px-6 py-3 font-medium">
                                 Action
@@ -79,20 +76,19 @@
                         @forelse ($data as $item)
                             <tr class="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['id']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['name']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['description']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['sku']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['price']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['selling_price']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['category']['name']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['name']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['category']['name']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_count']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_date']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['out_of_stock'] ? 'True' : 'False'}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap flex flex-row gap-2 items-center justify-centers">
-                                    <button class="text-white bg-green-600 rounded-md py-2 px-3" data-modal-open data-trigger="edit" data-id="{{$item['id']}}" data-name="{{$item['name']}}" data-description="{{$item['description']}}" data-sku="{{$item['sku']}}" data-price="{{$item['price']}}" data-selling_price="{{$item['selling_price']}}" data-category="{{$item['category']['id']}}">Edit</button>
-                                    <button class="text-white bg-red-800 rounded-md py-2 px-3" data-modal-open data-trigger="delete" data-id="{{$item['id']}}" data-name="{{$item['name']}}">Delete</button>
+                                    <button class="text-white bg-green-600 rounded-md py-2 px-3" data-modal-open data-trigger="edit" data-id="{{$item['id']}}" data-product_id="{{$item['product']['id']}}" data-stocked_count="{{$item['stocked_count']}}" data-stocked_date="{{$item['stocked_date']}}">Edit</button>
+                                    <button class="text-white bg-red-800 rounded-md py-2 px-3" data-modal-open data-trigger="delete" data-id="{{$item['id']}}" data-product_id="{{$item['product']['id']}}">Delete</button>
                                 </td>
                             </tr>
                         @empty
                             <tr class="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">
-                                <td colspan="8" class="px-6 py-4 text-center font-medium whitespace-nowrap">No Data Found</td>
+                                <td colspan="7" class="px-6 py-4 text-center font-medium whitespace-nowrap">No Data Found</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -117,28 +113,22 @@
             btn.addEventListener('click', () => {
                 const trigger = btn.dataset.trigger
                 const id = btn.dataset.id
-                const name = btn.dataset.name
-                const description = btn.dataset.description
-                const sku = btn.dataset.sku
-                const price = btn.dataset.price
-                const selling_price = btn.dataset.selling_price
-                const category = btn.dataset.category
+                const product_id = btn.dataset.product_id
+                const stocked_count = btn.dataset.stocked_count
+                const stocked_date = btn.dataset.stocked_date
                 document.getElementById('header').innerHTML = trigger.toUpperCase()
                 switch (trigger) {
                     case 'edit':
-                        document.getElementById('content').innerHTML = `<x-product-form action="{{ route('product.update', ':id') }}" method="PUT" dropdown="{{$dropdown}}"/>`.replace(':id', id);
-                        document.getElementById('name').value = name
-                        document.getElementById('description').value = description
-                        document.getElementById('sku').value = sku
-                        document.getElementById('price').value = price
-                        document.getElementById('selling_price').value = selling_price
-                        document.getElementById('category_id').value = category
+                        document.getElementById('content').innerHTML = `<x-stock-form action="{{ route('stock.update', ':id') }}" method="PUT" products="{{$products}}"/>`.replace(':id', id);
+                        document.getElementById('product_id').value = product_id
+                        document.getElementById('stocked_count').value = stocked_count
+                        document.getElementById('stocked_date').value = stocked_date
                         break;
                     case 'add':
-                        document.getElementById('content').innerHTML = `<x-product-form action="{{route('product.store')}}" dropdown="{{$dropdown}}" />`;
+                        document.getElementById('content').innerHTML = `<x-stock-form action="{{route('stock.store')}}" products="{{$products}}" />`;
                         break;
                     case 'delete':
-                        document.getElementById('content').innerHTML = `<x-product-delete action="{{route('product.destroy', ':id')}}" />`.replace(':id', id);
+                        document.getElementById('content').innerHTML = `<x-stock-delete action="{{route('stock.destroy', ':id')}}" />`.replace(':id', id);
                         break;
                 }
             })

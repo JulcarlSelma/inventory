@@ -2,25 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Stock;
 use App\Http\Requests\StockRequest;
+use App\Http\Services\CategoryService;
+use App\Http\Services\ProductService;
 use App\Http\Services\StockService;
 
 class StockController extends Controller
 {
     protected $service;
+    protected $services = [];
 
     public function __construct()
     {
-        $this->service = new StockService();
+        $this->services = [
+            'stock' => new StockService(),
+            'category' => new CategoryService(),
+            'product' => new ProductService()
+        ];
     }
     
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return $this->service->all();
+        $params = $request->all();
+        $data = $this->services['stock']->all($params);
+        $dropdown = $this->services['category']->dropdown();
+        $products = $this->services['product']->getProductStocks();
+        $stocks = $this->services['stock']->getAll()->pluck('id')->toArray();
+        return view('stocks.index', compact('data', 'dropdown', 'products', 'stocks'));
     }
 
     /**
@@ -29,7 +42,8 @@ class StockController extends Controller
     public function store(StockRequest $request)
     {
         $params = $request->validated();
-        return $this->service->create($params);
+        $this->services['stock']->create($params);
+        return redirect()->route('stock.index');
     }
 
     /**
@@ -37,7 +51,7 @@ class StockController extends Controller
      */
     public function show($id)
     {
-        return $this->service->find($id);
+        return $this->services['stock']->find($id);
     }
 
     /**
@@ -46,7 +60,8 @@ class StockController extends Controller
     public function update(StockRequest $request, $id)
     {
         $params = $request->validated();
-        return $this->service->update($id, $params);
+        $this->services['stock']->update($id, $params);
+        return redirect()->route('stock.index');
     }
 
     /**
@@ -54,6 +69,7 @@ class StockController extends Controller
      */
     public function destroy($id)
     {
-        return $this->service->delete($id);
+        $this->services['stock']->delete($id);
+        return redirect()->route('stock.index');
     }
 }

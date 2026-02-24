@@ -12,9 +12,14 @@ class StockService extends BaseService
         $this->repository = new StockRepository();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        return $this->repository->all();
+        return $this->repository->all($params);
+    }
+
+    public function getAll()
+    {
+        return $this->repository->getAll();
     }
 
     public function find($id)

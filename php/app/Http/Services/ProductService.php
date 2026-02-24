@@ -17,6 +17,11 @@ class ProductService extends BaseService
         return $this->repository->all($params);
     }
 
+    public function getProductStocks()
+    {
+        return $this->repository->getProductStocks();
+    }
+
     public function find($id)
     {
         return $this->repository->find($id);
