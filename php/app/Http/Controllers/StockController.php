@@ -11,7 +11,6 @@ use App\Http\Services\StockService;
 
 class StockController extends Controller
 {
-    protected $service;
     protected $services = [];
 
     public function __construct()

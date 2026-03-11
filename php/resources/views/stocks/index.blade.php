@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<h1>TODO:: When saving stocks it should save a record also in stock history</h1>
+<h1>TODO:: Stocked date should not be in stocks table but in stock history, the display in stocked date should be the updated stock count come from stock history</h1>
 <div class="flex flex-col gap-3">
     @if ($errors->any())
         <x-card class="bg-red-500 py-2 px-3">
@@ -80,7 +82,7 @@
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['category']['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_count']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_date']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['out_of_stock'] ? 'True' : 'False'}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_count'] <= 0 ? 'True' : 'False'}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap flex flex-row gap-2 items-center justify-centers">
                                     <button class="text-white bg-green-600 rounded-md py-2 px-3" data-modal-open data-trigger="edit" data-id="{{$item['id']}}" data-product_id="{{$item['product']['id']}}" data-stocked_count="{{$item['stocked_count']}}" data-stocked_date="{{$item['stocked_date']}}">Edit</button>
                                     <button class="text-white bg-red-800 rounded-md py-2 px-3" data-modal-open data-trigger="delete" data-id="{{$item['id']}}" data-product_id="{{$item['product']['id']}}">Delete</button>

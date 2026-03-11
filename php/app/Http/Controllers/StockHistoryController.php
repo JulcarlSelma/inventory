@@ -3,24 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stock;
+use Illuminate\Http\Request;
 use App\Http\Requests\StockRequest;
-use App\Http\Service\StockHistoryService;
+use App\Http\Services\CategoryService;
+use App\Http\Services\ProductService;
+use App\Http\Services\StockService;
 
 class StockHistoryController extends Controller
 {
-    protected $service;
+    protected $services = [];
 
     public function __construct()
     {
-        $this->service = new StockHistoryService();
+        $this->services = [
+            'stock' => new StockService(),
+            'category' => new CategoryService(),
+            'product' => new ProductService()
+        ];
     }
     
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return $this->service->all();
+        $params = $request->all();
+        $data = $this->services['stock']->all($params);
+        $dropdown = $this->services['category']->dropdown();
+        $products = $this->services['product']->getProductStocks();
+        $stocks = $this->services['stock']->getAll()->pluck('id')->toArray();
+        return view('inventory.index', compact('data', 'dropdown', 'products', 'stocks'));
     }
 
     /**

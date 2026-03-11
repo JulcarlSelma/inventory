@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->integer('stocked_count')->default(0);
             $table->date('stocked_date')->nullable();
-            $table->boolean('out_of_stock')->default(false);
             $table->timestamps();
             $table->softDeletes();
 

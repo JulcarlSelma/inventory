@@ -5,7 +5,7 @@ namespace App\Http\Repositories;
 use DB;
 use Exception;
 use App\Models\StockHistory;
-use App\Repositories\BaseRepository;
+use App\Http\Repositories\BaseRepository;
 
 class StockHistoryRepository extends BaseRepository
 {
@@ -14,11 +14,18 @@ class StockHistoryRepository extends BaseRepository
         $this->model = new StockHistory();
     }
 
-    public function all($paginate = 10)
+    public function all(array $params = [])
     {
         try {
-            $data = $this->model->with('stock')->paginate($paginate);
-            return $this->success($data, 'Data from page #'.$data->currentPage());
+            $query = $this->model->with('stock.product');
+            
+            if (!empty($params) && isset($params['name'])) {
+                $query = $query->whereHas('stock.product', function ($productQuery) use ($params) {
+                    $productQuery->where('name', 'like', '%'.$params['name'].'%');
+                });
+            }
+
+            return $query->paginate(5)->withQueryString();
         } catch (Exception $e) {
             return $this->error($e->getMessage(), [], $this->internalServerError);
         }

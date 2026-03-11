@@ -16,8 +16,7 @@ class Stock extends Model
     protected $fillable = [
         'product_id',
         'stocked_count',
-        'stocked_date',
-        'out_of_stock'
+        'stocked_date'
     ];
 
     public function product()
@@ -27,6 +26,6 @@ class Stock extends Model
 
     public function history()
     {
-        return $this->belongsToMany(StockHistory::class, 'stock_id', 'id');
+        return $this->hasMany(StockHistory::class, 'stock_id', 'id');
     }
 }

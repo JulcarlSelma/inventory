@@ -22,7 +22,7 @@
     </div>
     <div>
         <label for="stocked_date" class="block mb-2.5 text-sm font-medium text-heading">Stocked Date</label>
-        <input type="date" id="stocked_date" name="stocked_date" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" required />
+        <input type="date" id="stocked_date" name="stocked_date" value="{{ date('Y-m-d') }}" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" required />
     </div>
     <x-button variant="primary" type="submit">Submit</x-button>
 </form>

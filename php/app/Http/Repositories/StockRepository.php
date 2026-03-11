@@ -17,7 +17,8 @@ class StockRepository extends BaseRepository
     public function all(array $params = [])
     {
         try {
-            $query = $this->model->with('product.category');
+            $query = $this->model->with('product.category')
+                ->with('history');
             
             if (!empty($params) && isset($params['name'])) {
                 $query = $query->where('name', 'like', '%'.$params['name'].'%');

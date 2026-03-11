@@ -15,6 +15,7 @@ class StockHistory extends Model
     protected $fillable = [
         'stock_id',
         'count',
+        'type',
         'out_date',
         'requestor',
         'approved_by',

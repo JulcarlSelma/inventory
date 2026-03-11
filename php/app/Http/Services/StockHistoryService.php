@@ -12,9 +12,9 @@ class StockHistoryService extends BaseService
         $this->repository = new StockHistoryRepository();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        return $this->repository->all();
+        return $this->repository->all($params);
     }
 
     public function find($id)

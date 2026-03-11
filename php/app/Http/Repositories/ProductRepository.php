@@ -7,7 +7,8 @@ use Exception;
 use App\Models\Product;
 use App\Http\Repositories\BaseRepository;
 
-class ProductRepository extends BaseRepository {
+class ProductRepository extends BaseRepository
+{
     public function __construct()
     {
         $this->model = new Product();
@@ -31,7 +32,7 @@ class ProductRepository extends BaseRepository {
 
     public function getProductStocks()
     {
-        return $this->model->all();
+        return $this->model->whereDoesntHave('stock')->get();
     }
 
     public function find($id)
