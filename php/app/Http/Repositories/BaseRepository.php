@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BaseRepository {
     protected $model = null;
+    protected $models = [];
     protected $badRequest = Response::HTTP_BAD_REQUEST;
     protected $internalServerError = Response::HTTP_INTERNAL_SERVER_ERROR;
     protected $notFound = Response::HTTP_NOT_FOUND;

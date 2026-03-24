@@ -66,9 +66,9 @@ class StockController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($historyId)
     {
-        $this->services['stock']->delete($id);
+        $this->services['stock']->delete($historyId);
         return redirect()->route('stock.index');
     }
 }

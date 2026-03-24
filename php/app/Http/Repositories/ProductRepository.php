@@ -34,7 +34,7 @@ class ProductRepository extends BaseRepository
 
     public function getProductStocks()
     {
-        return $this->model->whereDoesntHave('stock')->get();
+        return $this->model->get();
     }
 
     public function find($id)

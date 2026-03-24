@@ -62,9 +62,6 @@
                             <th scope="col" class="px-6 py-3 font-medium">
                                 Count
                             </th>
-                            <th scope="col" class="px-6 py-3 font-medium">
-                                Stocked Date
-                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,7 +72,6 @@
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['category']['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_count']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_date']}}</td>
                             </tr>
                             <tr id="history-{{$item['id']}}" class="hidden odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">
                                 <td colspan="8" class="px-6 py-4 text-center font-medium whitespace-nowrap">
@@ -100,16 +96,21 @@
                                                 <th scope="col" class="px-6 py-3 font-medium">
                                                     Approved By
                                                 </th>
+                                                <th scope="col" class="px-6 py-3 font-medium">
+                                                    Date
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse($item['history'] as $history)
                                                 <tr class="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">
                                                     <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['id']}}</td>
-                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['product']['name']}}</td>
-                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['product']['category']['name']}}</td>
-                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['stocked_count']}}</td>
-                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['stocked_date']}}</td>
+                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['type']}}</td>
+                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['count']}}</td>
+                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['details']}}</td>
+                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['requestor']}}</td>
+                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['approved_by']}}</td>
+                                                    <td class="px-6 py-4 font-medium whitespace-nowrap">{{$history['date']}}</td>
                                                 </tr>
                                             @empty
                                                 <tr class="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">

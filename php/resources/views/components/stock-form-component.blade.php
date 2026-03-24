@@ -3,6 +3,7 @@
     @if($attributes['method'] == 'PUT')
         @method('PUT')
     @endif
+    <input type="hidden" name="history_id" id="history_id" />
     <div>
         <label for="product_id" class="block mb-2.5 text-sm font-medium text-heading">Product</label>
         <select name="product_id" id="product_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" required>
@@ -23,8 +24,8 @@
     <div>
         <label for="type" class="block mb-2.5 text-sm font-medium text-heading">Product</label>
         <select name="type" id="type" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" required>
-            <option value="IN">IN</option>
-            <option value="OUT">OUT</option>
+            <option value="in">IN</option>
+            <option value="out">OUT</option>
         </select>
     </div>
     <div>

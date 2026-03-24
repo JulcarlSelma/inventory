@@ -5,6 +5,7 @@ namespace App\Http\Repositories;
 use DB;
 use Exception;
 use App\Models\Stock;
+use App\Models\StockHistory;
 use App\Http\Repositories\BaseRepository;
 
 class StockRepository extends BaseRepository
@@ -12,6 +13,9 @@ class StockRepository extends BaseRepository
     public function __construct()
     {
         $this->model = new Stock();
+        $this->models = [
+            'stock_history' => new StockHistory()
+        ];
     }
 
     public function all(array $params = [])
@@ -55,12 +59,44 @@ class StockRepository extends BaseRepository
         if (!empty($params)) {
             try {
                 DB::beginTransaction();
-                $result = $this->model->create($params);
+                $stockParams = [
+                    'product_id' => $params['product_id'],
+                    'stocked_count' => $params['stocked_count']
+                ];
+                $stockedExisting = $this->model->where('product_id', $params['product_id'])->first();
+
+                if (isset($params['type']) && $stockedExisting) {
+                    if ($params['type'] === 'out') {
+                        $stockParams['stocked_count'] = $stockedExisting->stocked_count - abs($params['stocked_count']);
+                    } else if ($params['type'] === 'in') {
+                        $stockParams['stocked_count'] = $stockedExisting->stocked_count + abs($params['stocked_count']);
+                    }
+                } else {
+                    $stockParams['stocked_count'] = abs($params['stocked_count']);
+                }
+
+                $stock = $this->model->updateOrCreate(
+                    ['product_id' => $params['product_id']],
+                    $stockParams
+                );
+
+                $historyParams = [
+                    'stock_id' => $stock->id,
+                    'count' => $params['stocked_count'],
+                    'type' => $params['type'],
+                    'date' => $params['date'],
+                    'requestor' => $params['requestor'] ?? null,
+                    'approved_by' => $params['approved_by'] ?? null,
+                    'details' => $params['details'] ?? null
+                ];
+
+                $stockHistory = $this->models['stock_history']->create($historyParams);
 
                 DB::commit();
-                return $this->success($result, 'Stock created successfully');
+                return $this->success($stock, 'Stock created successfully');
             } catch (Exception $e) {
                 DB::rollBack(); 
+                \Log::error('Error creating stock: '.$e->getMessage());
                 return $this->error($e->getMessage(), [], $this->internalServerError);
             }
         }
@@ -77,7 +113,52 @@ class StockRepository extends BaseRepository
             if ($stock) {
                 try {
                     DB::beginTransaction();
-                    $stock->update($params);
+                    $stockParams = [
+                        'product_id' => $params['product_id'],
+                        'stocked_count' => $params['stocked_count']
+                    ];
+
+                    $stockedHistoryExisting = $this->models['stock_history']
+                        ->where('stock_id', $id)
+                        ->where('id', $params['history_id'])
+                        ->first();
+
+                    if (isset($params['type']) && $stockedHistoryExisting) {
+                        if ($params['type'] === 'out') {
+                            if ($stockedHistoryExisting->count > $params['stocked_count']) {
+                                $stockParams['stocked_count'] = $stock->stocked_count + abs($params['stocked_count']);
+                            } else {
+                                $stockParams['stocked_count'] = ($stock->stocked_count + $stockedHistoryExisting->count) - abs($params['stocked_count']);
+                            }
+                        } else if ($params['type'] === 'in') {
+                            $stockParams['stocked_count'] = ($stock->stocked_count - $stockedHistoryExisting->count) + abs($params['stocked_count']);
+                        }
+                    } else {
+                        $stockParams['stocked_count'] = abs($params['stocked_count']);
+                    }
+
+                    $stock->update($stockParams);
+
+                    $historyParams = [
+                        'stock_id' => $id,
+                        'count' => $params['stocked_count'],
+                        'type' => $params['type'],
+                        'date' => $params['date'],
+                        'requestor' => $params['requestor'] ?? null,
+                        'approved_by' => $params['approved_by'] ?? null,
+                        'details' => $params['details'] ?? null
+                    ];
+
+                    if (isset($params['history_id'])) {
+                        $stockHistory = $this->models['stock_history']->find($params['history_id']);
+                        if ($stockHistory) {
+                            $stockHistory->update($historyParams);
+                        } else {
+                            $this->models['stock_history']->create($historyParams);
+                        }
+                    } else {
+                        $this->models['stock_history']->create($historyParams);
+                    }
                     DB::commit();
                     $updated = $this->model->find($id);
                     return $this->success($updated, 'Stock #'.$id.' is updated');
@@ -93,24 +174,36 @@ class StockRepository extends BaseRepository
     }
     
 
-    public function delete($id)
+    public function delete($historyId)
     {
-        if (isset($id)) {
-            $stock = $this->model->find($id);
+        if (isset($historyId)) {
+            $history = $this->models['stock_history']->find($historyId);
 
-            if (isset($stock)) {
+            if (isset($history)) {
                 try {
                     DB::beginTransaction();
-                    $stock->delete();
+
+                    $stock = $this->model->find($history->stock_id);
+                    if ($stock) {
+                        $stockCount = $stock->stocked_count - ($history->type == 'in' ? $history->count : -($history->count));
+                        $stock->stocked_count = $stockCount;
+                        $stock->save();
+
+                        if ($stockCount <= 0) {
+                            $stock->delete();
+                        }
+                    }
+
+                    $history->delete();
                     DB::commit();
-                    return $this->success(null, 'Stock #'.$id.' was successfully deleted');
+                    return $this->success(null, 'Stock #'.$historyId.' was successfully deleted');
                 } catch (Exception $e) {
                     DB::rollback();
                     return $this->error($e->getMessage(), [], $this->internalServerError);
                 }
             }
 
-            return $this->success(null, 'No record found for ID #'.$id, $this->notFound);
+            return $this->success(null, 'No record found for ID #'.$historyId, $this->notFound);
         }
 
         return $this->error('Please provide an ID', [], $this->badRequest);

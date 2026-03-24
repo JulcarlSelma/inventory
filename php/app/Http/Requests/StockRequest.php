@@ -21,11 +21,19 @@ class StockRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
         return [
+            'history_id' =>  [
+                $isUpdate ? 'required' : 'nullable',
+                'integer',
+                'exists:stock_history,id'
+            ],
             'product_id' => 'required|integer|exists:products,id',
             'stocked_count' => 'required|integer|min:0',
+            'type' => 'required|string|in:in,out',
             'date' => 'nullable|date',
             'requestor' => 'nullable|string|max:255',
+            'approved_by' => 'nullable|string|max:255',
             'details' => 'nullable|string',
         ];
     }
