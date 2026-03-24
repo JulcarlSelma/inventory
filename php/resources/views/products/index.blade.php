@@ -89,7 +89,7 @@
                             <tr class="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['id']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{!! DNS1D::getBarcodeHTML($item['barcode'], 'PHARMA2T') !!}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap"><img src="{{ isset($item['image_path']) ? asset('storage/'.$item['image_path']) : asset('images/default_product.png') }}" alt="{{ $item['name'] }}" class="w-full h-auto object-cover" /></td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap"><img src="{{ isset($item['image_path']) ? asset('storage/'.$item['image_path']) : asset('images/default_product.png') }}" alt="{{ $item['name'] }}" class="w-[50px] h-[50px] object-cover" /></td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['description']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['sku']}}</td>
