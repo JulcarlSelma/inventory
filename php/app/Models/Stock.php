@@ -15,8 +15,7 @@ class Stock extends Model
 
     protected $fillable = [
         'product_id',
-        'stocked_count',
-        'stocked_date'
+        'stocked_count'
     ];
 
     public function product()

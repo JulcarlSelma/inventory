@@ -4,6 +4,8 @@ namespace App\Http\Repositories;
 
 use DB;
 use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Http\Repositories\BaseRepository;
 
@@ -54,6 +56,17 @@ class ProductRepository extends BaseRepository
         if (!empty($params)) {
             try {
                 DB::beginTransaction();
+
+                if (isset($params['image_path']) && $params['image_path'] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $params['image_path'];
+
+                    $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+                    $path = $file->storeAs('products', $filename, 'public');
+
+                    // Replace file with path
+                    $params['image_path'] = $path;
+                }
                 $result = $this->model->create($params);
 
                 DB::commit();
@@ -75,6 +88,19 @@ class ProductRepository extends BaseRepository
             if ($product) {
                 try {
                     DB::beginTransaction();
+                    
+
+                    if (isset($params['image_path']) && $params['image_path'] instanceof \Illuminate\Http\UploadedFile) {
+                        $file = $params['image_path'];
+
+                        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+                        $path = $file->storeAs('products', $filename, 'public');
+
+                        // Replace file with path
+                        $params['image_path'] = $path;
+                    }
+
                     $product->update($params);
                     DB::commit();
                     $updated = $this->model->with('category')->find($id);

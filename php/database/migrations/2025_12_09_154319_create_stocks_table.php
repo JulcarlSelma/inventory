@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->integer('stocked_count')->default(0);
-            $table->date('stocked_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

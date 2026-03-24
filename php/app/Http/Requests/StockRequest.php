@@ -24,7 +24,9 @@ class StockRequest extends FormRequest
         return [
             'product_id' => 'required|integer|exists:products,id',
             'stocked_count' => 'required|integer|min:0',
-            'stocked_date' => 'nullable|date',
+            'date' => 'nullable|date',
+            'requestor' => 'nullable|string|max:255',
+            'details' => 'nullable|string',
         ];
     }
 }

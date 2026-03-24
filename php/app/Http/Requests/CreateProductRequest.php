@@ -23,9 +23,12 @@ class CreateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image_path' => 'nullable|mimes:jpg,jpeg,png,gif|max:2048', // Optional image upload with size limit
             'name' => 'required|string|max:255',
             'description' => 'nullable|string', // Make description optional
-            'sku' => 'required|string|max:100|unique:products,sku,' . $this->route('product'),
+            'sku' => 'nullable|string|max:100|unique:products,sku,' . $this->route('product'),
+            'barcode' => 'nullable|string|max:50|unique:products,barcode,' . $this->route('product'),
+            'serial_number' => 'nullable|string|max:100|unique:products,serial_number,' . $this->route('product'),
             'price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0|gte:price', // Must be greater than or equal to the price
             'category_id' => [

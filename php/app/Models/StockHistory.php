@@ -16,7 +16,7 @@ class StockHistory extends Model
         'stock_id',
         'count',
         'type',
-        'out_date',
+        'date',
         'requestor',
         'approved_by',
         'details',

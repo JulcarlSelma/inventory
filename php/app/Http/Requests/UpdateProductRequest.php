@@ -24,17 +24,32 @@ class UpdateProductRequest extends FormRequest
     {
         $productId = $this->route('product'); 
         return [
+            'image_path' => 'nullable|mimes:jpg,jpeg,png,gif|max:2048', // Optional image upload with size limit
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0|gte:price',
             // Special handling for the 'unique' rule on 'sku'
             'sku' => [
-                'required',
+                'nullable',
                 'string',
                 'max:100',
                 // This rule checks for uniqueness, but ignores the record with the current $productId
                 Rule::unique('products', 'sku')->ignore($productId),
+            ],
+            'barcode' => [
+                'nullable',
+                'string',
+                'max:50',
+                // This rule checks for uniqueness, but ignores the record with the current $productId
+                Rule::unique('products', 'barcode')->ignore($productId),
+            ],
+            'serial_number' => [
+                'nullable',
+                'string',
+                'max:100',
+                // This rule checks for uniqueness, but ignores the record with the current $productId
+                Rule::unique('products', 'serial_number')->ignore($productId),
             ],
             'category_id' => [
                 'nullable',        // Allows the field to be null or missing from the request

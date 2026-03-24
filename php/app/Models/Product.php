@@ -13,9 +13,12 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
+        'image_path',
         'name',
         'description',
         'sku',
+        'barcode',
+        'serial_number',
         'price',
         'selling_price',
         'category_id'

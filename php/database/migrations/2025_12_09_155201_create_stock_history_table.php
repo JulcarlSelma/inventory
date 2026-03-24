@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('stock_id');
             $table->integer('count')->default(0);
             $table->enum('type', ['in', 'out']);
-            $table->date('out_date');
+            $table->date('date');
             $table->string('requestor', 255)->nullable();
             $table->string('approved_by', 255)->nullable();
             $table->longText('details')->nullable();
