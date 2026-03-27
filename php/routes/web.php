@@ -14,4 +14,4 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::resource('product', ProductController::class)->except(['create', 'edit']);
 Route::resource('category', CategoryController::class)->except(['create', 'edit', 'show']);
 Route::resource('stock', StockController::class)->except(['create', 'edit']);
-Route::resource('inventory', StockHistoryController::class)->except(['create', 'edit']);
+Route::get('inventory', [StockController::class, 'inventory'])->name('inventory');

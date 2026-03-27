@@ -39,6 +39,55 @@ class StockRepository extends BaseRepository
         return $this->model->all();
     }
 
+    public function filter(array $params = [])
+    {
+        try {
+            if (empty($params)) {
+                return [];
+            }
+
+            // 1. Start the query
+            $query = $this->model->with(['product.category']);
+
+            // 2. Constrain the Eager Loading for 'history'
+            // This ensures the returned collection only contains the filtered history items
+            $query->with(['history' => function($historyQuery) use ($params) {
+                if (isset($params['start_date'], $params['end_date'])) {
+                    $historyQuery->whereBetween('date', [$params['start_date'], $params['end_date']]);
+                }
+                if (isset($params['type']) && $params['type'] !== 'all') {
+                    $historyQuery->where('type', $params['type']);
+                }
+            }]);
+
+            // 3. Filter the main query results (whereHas)
+            // This ensures we only get parent models that actually HAVE those history records
+            $query->whereHas('history', function($historyQuery) use ($params) {
+                if (isset($params['start_date'], $params['end_date'])) {
+                    $historyQuery->whereBetween('date', [$params['start_date'], $params['end_date']]);
+                }
+                if (isset($params['type']) && $params['type'] !== 'all') {
+                    $historyQuery->where('type', $params['type']);
+                }
+            });
+
+            // 4. Other Filters
+            if (isset($params['product_id']) && $params['product_id'] !== 'all') {
+                $query->where('product_id', $params['product_id']);
+            }
+
+            if (isset($params['category_id']) && $params['category_id'] !== 'all') {
+                $query->whereHas('product', function($q) use ($params) {
+                    $q->where('category_id', $params['category_id']);
+                });
+            }
+
+            return $query->get();
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), [], $this->internalServerError);
+        }
+    }
+
     public function find($id)
     {
         try {
@@ -188,10 +237,6 @@ class StockRepository extends BaseRepository
                         $stockCount = $stock->stocked_count - ($history->type == 'in' ? $history->count : -($history->count));
                         $stock->stocked_count = $stockCount;
                         $stock->save();
-
-                        if ($stockCount <= 0) {
-                            $stock->delete();
-                        }
                     }
 
                     $history->delete();

@@ -27,4 +27,79 @@ html {
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
+    .printable {
+        width: 816px;
+        padding: 48px;
+        background: white;
+        margin: 0 auto;
+    }
+
+    .printable h1 {
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .printable p {
+        font-size: 12px;
+    }
+
+    .printable p span {
+        text-transform: uppercase;
+    }
+
+    .printable table {
+        margin: 20px 0;
+        width: 100%;
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    .printable table thead {
+        background: rgb(58, 58, 58);
+        color: white;
+    }
+
+    .printable table thead th,
+    .printable table tbody td {
+        text-align: left;
+        padding: 0 10px;
+    }
+
+    .printable table tbody table {
+        margin: 0 0 10px 0;
+    }
+
+    .printable table tbody tr td.out,
+    .printable table tbody table tbody tr.out {
+        background: rgb(241, 163, 163);
+    }
+}
+
+@media print {
+    @page {
+        size: Long;
+        margin: 0.5cm;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    .printable, .printable * {
+        visibility: visible;
+    }
+
+    .printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    /* IMPORTANT FIX */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
 }

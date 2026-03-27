@@ -41,4 +41,9 @@ class StockService extends BaseService
     {
         return $this->repository->delete($id);
     }
+
+    public function filter(array $params = [])
+    {
+        return $this->repository->filter($params);
+    }
 }

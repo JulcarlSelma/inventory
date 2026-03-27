@@ -71,4 +71,13 @@ class StockController extends Controller
         $this->services['stock']->delete($historyId);
         return redirect()->route('stock.index');
     }
+
+    public function inventory(Request $request)
+    {
+        $params = $request->all();
+        $stocks = $this->services['stock']->filter($params);
+        $dropdown = $this->services['category']->dropdown();
+        $products = $this->services['product']->getProductStocks();
+        return view('inventory.index', compact('dropdown', 'products', 'stocks'));
+    }
 }
