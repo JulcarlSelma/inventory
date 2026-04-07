@@ -11,34 +11,50 @@
             </ul>
         </x-card>
     @endif
-    <x-card>
-        <x-slot:header>
-            Filters
-        </x-slot:header>
-        <div class="p-2 w-full flex flex-row gap-3 items-end justify-between">
-            <form method="GET" class="w-full flex flex-row items-end justify-between gap-3">
-                <div class="w-full">
-                    <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Name</label>
-                    <input type="text" autocomplete name="name" name="name" value="{{old('name')}}" class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
-                </div>
-                <div class="w-full">
-                    <label for="category" class="block mb-2.5 text-sm font-medium text-heading">Category</label>
-                    <select name="category" id="category" class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body">
-                        <option value="" disabled>Select option</option>
-                        @forelse ($dropdown as $item)
-                            <option value="{{$item['id']}}">{{$item['name']}}</option>
-                        @empty
-                            <option value="" disabled>No data</option>
-                        @endforelse
-                    </select>
-                </div>
-                <x-button type="submit" variant="primary">Submit</x-button>
-            </form>
-            <form action="{{route('product.index')}}" method="GET">
-                <x-button variant="gray">Clear</x-button>
-            </form>
-        </div>
-    </x-card>
+    <div class="flex flex-row gap-2">
+        <x-card>
+            <x-slot:header>
+                Filters
+            </x-slot:header>
+            <div class="p-2 w-full flex flex-row gap-3 items-end justify-between">
+                <form method="GET" class="w-full flex flex-row items-end justify-between gap-3" autocomplete="off">
+                    <div class="w-full">
+                        <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Name</label>
+                        <input type="text" autocomplete name="name" name="name" value="{{old('name')}}" class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
+                    </div>
+                    <div class="w-full">
+                        <label for="category" class="block mb-2.5 text-sm font-medium text-heading">Category</label>
+                        <select name="category" id="category" class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body">
+                            <option value="" disabled>Select option</option>
+                            @forelse ($dropdown as $item)
+                                <option value="{{$item['id']}}">{{$item['name']}}</option>
+                            @empty
+                                <option value="" disabled>No data</option>
+                            @endforelse
+                        </select>
+                    </div>
+                    <x-button type="submit" variant="primary">Submit</x-button>
+                </form>
+                <form action="{{route('product.index')}}" method="GET">
+                    <x-button variant="gray">Clear</x-button>
+                </form>
+            </div>
+        </x-card>
+        <x-card class="w-[300px]">
+            <x-slot:header>
+                Barcode auto search
+            </x-slot:header>
+            <div class="p-2 w-full">
+                <form method="GET" id="barcodeForm" class="w-full h-full flex flex-row items-end justify-center gap-3" autocomplete="off">
+                    <x-button id="scanModeBtn" type="button" variant="primary" class="w-full {{request()->has('barcode') ? 'hidden' : 'inline-flex'}}">Scan mode</x-button>
+                    <div id="barcodeInput" class="w-full {{request()->has('barcode') ? 'block' : 'hidden'}}">
+                        <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Barcode</label>
+                        <input type="text" id="barcode" name="barcode" value="{{request()->get('barcode')}}" onblur="this.focus()" autofocus class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
+                    </div>
+                </form>
+            </div>
+        </x-card>
+    </div>
     <x-card>
         <x-slot:header class="flex flex-row items-center justify-between">
             <span>Data</span>
@@ -88,7 +104,12 @@
                         @forelse ($data as $item)
                             <tr class="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-gray-200">
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['id']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{!! DNS1D::getBarcodeHTML($item['barcode'], 'PHARMA2T') !!}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap w-[300px] h-[100px] flex flex-col items-center gap-1">
+                                    <div>
+                                        {!! DNS1D::getBarcodeHTML($item['barcode'], 'C128', 2, 50) !!}
+                                    </div>
+                                    <span>{{$item['barcode']}}</span>
+                                </td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap"><img src="{{ isset($item['image_path']) ? asset('storage/'.$item['image_path']) : asset('images/default_product.png') }}" alt="{{ $item['name'] }}" class="w-[50px] h-[50px] object-cover" /></td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['description']}}</td>
@@ -127,6 +148,9 @@
     (function () {
         document.querySelectorAll('[data-modal-open]').forEach((btn) => {
             btn.addEventListener('click', () => {
+                document.getElementById('scanModeBtn').classList.remove('hidden');
+                document.getElementById('scanModeBtn').classList.add('inline-flex');
+                document.getElementById('barcodeInput').classList.add('hidden');
                 const trigger = btn.dataset.trigger
                 const id = btn.dataset.id
                 const name = btn.dataset.name
@@ -159,6 +183,24 @@
                 }
             })
         })
+        document.getElementById('scanModeBtn').addEventListener('click', (btn) => {
+            const inputContainer = document.getElementById('barcodeInput');
+            inputContainer.classList.remove('hidden');
+            inputContainer.querySelector('input').focus();
+            btn.target.classList.remove('inline-flex');
+            btn.target.classList.add('hidden');
+        });
+        let timer;
+
+        document.getElementById('barcode').addEventListener('input', function() {
+            clearTimeout(timer);
+
+            timer = setTimeout(() => {
+                if (this.value.trim() !== '') {
+                    document.getElementById('barcodeForm').submit();
+                }
+            }, 200); // small delay to allow full scan
+        });
     })({});
 </script>
 @endpush

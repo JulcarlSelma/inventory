@@ -28,6 +28,12 @@ class StockRepository extends BaseRepository
                 $query = $query->where('name', 'like', '%'.$params['name'].'%');
             }
 
+            if (!empty($params) && isset($params['barcode'])) {
+                $query = $query->whereHas('product', function($productQuery) use ($params) {
+                    $productQuery->where('barcode', 'like', '%'.$params['barcode'].'%');
+                });
+            }
+
             return $query->paginate(5)->withQueryString();
         } catch (Exception $e) {
             return $this->error($e->getMessage(), [], $this->internalServerError);

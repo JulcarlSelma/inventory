@@ -25,6 +25,10 @@ class ProductRepository extends BaseRepository
                 $query = $query->where('name', 'like', '%'.$params['name'].'%');
             }
 
+            if (!empty($params) && isset($params['barcode'])) {
+                $query = $query->where('barcode', 'like', '%'.$params['barcode'].'%');
+            }
+
             $query->with('category');
             return $query->paginate(5)->withQueryString();
         } catch (Exception $e) {
