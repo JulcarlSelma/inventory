@@ -37,8 +37,17 @@ class ProductController extends Controller
     public function store(CreateProductRequest $request)
     {
         $params = $request->validated();
-        $this->services['product']->create($params);
-        return redirect()->route('product.index');
+        $result = $this->services['product']->create($params)->getData(true);
+        if (isset($result['error'])) {
+            return redirect()->route('products.brands.index')->withErrors([
+                'custom_error' => $result['error']
+            ]);
+        }
+
+        session()->flash('success', $result['message']);
+        return redirect()->route('product.index', array_filter(request()->query(), function($value) {
+            return $value !== null && $value !== '' && $value !== 'null';
+        }));
     }
 
     /**

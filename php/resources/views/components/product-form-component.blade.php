@@ -39,7 +39,7 @@
     </div>
     <div>
         <label for="price" class="block mb-2.5 text-sm font-medium text-heading">Cost Price</label>
-        <input type="number" id="price" name="price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="20" required />
+        <input type="number" id="price" name="price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="20" />
     </div>
     <div>
         <label for="selling_price" class="block mb-2.5 text-sm font-medium text-heading">Selling Price</label>

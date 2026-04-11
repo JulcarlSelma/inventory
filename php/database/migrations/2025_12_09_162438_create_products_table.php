@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('name', 255);
             $table->longText('description')->nullable()->unique();
             $table->string('barcode', 50)->nullable()->unique();
-            $table->string('serial_number', 100)->unique();
-            $table->string('sku', 100)->nullable()->unique();
+            $table->string('serial_number', 100)->nullable()->unique();
+            $table->string('sku', 100)->nullable()->nullable()->unique();
             $table->decimal('price', 10, 2)->nullable();
             $table->decimal('selling_price', 10, 2)->nullable();
             $table->unsignedBigInteger('category_id')->nullable();

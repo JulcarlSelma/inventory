@@ -15,7 +15,7 @@ class BaseRepository {
     {
         return response()->json([
             'data' => $data,
-            'mesasge' => $message,
+            'message' => $message,
             'errors' => null,
         ], $statusCode);
     }
@@ -24,7 +24,7 @@ class BaseRepository {
     {
         return response()->json([
             'data' => null,
-            'mesasge' => $error,
+            'message' => $error,
             'errors' => $errors,
         ], $statusCode);
     }

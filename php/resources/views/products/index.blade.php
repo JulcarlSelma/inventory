@@ -11,6 +11,15 @@
             </ul>
         </x-card>
     @endif
+        
+    @if (session()->has('success'))
+        <x-card id="successCard" class="bg-green-500 py-2 px-3">
+            <ul>
+                <li class="text-white">{{ session()->get('success') }}</li>
+            </ul>
+        </x-card>
+    @endif
+    
     <div class="flex flex-row gap-2">
         <x-card>
             <x-slot:header>
@@ -49,7 +58,7 @@
                     <x-button id="scanModeBtn" type="button" variant="primary" class="w-full {{request()->has('barcode') ? 'hidden' : 'inline-flex'}}">Scan mode</x-button>
                     <div id="barcodeInput" class="w-full {{request()->has('barcode') ? 'block' : 'hidden'}}">
                         <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Barcode</label>
-                        <input type="text" id="barcode" name="barcode" value="{{request()->get('barcode')}}" onblur="this.focus()" autofocus class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
+                        <input type="text" id="barcode_search" name="barcode" value="{{request()->get('barcode')}}" onblur="this.focus()" autofocus class="border border-gray-200 text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Enter product name" />
                     </div>
                 </form>
             </div>
@@ -115,8 +124,8 @@
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['description']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['sku']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['serial_number']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['price']}}</td>
-                                <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['selling_price']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">Php {{number_format$item['price'], 2}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">Php {{number_format($item['selling_price'], 2)}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['category']['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap flex flex-row gap-2 items-center justify-centers">
                                     <button class="text-white bg-green-600 rounded-md py-2 px-3" data-modal-open data-trigger="edit" data-id="{{$item['id']}}" data-name="{{$item['name']}}" data-description="{{$item['description']}}" data-sku="{{$item['sku']}}" data-barcode="{{$item['barcode']}}" data-serial_number="{{$item['serial_number']}}" data-price="{{$item['price']}}" data-selling_price="{{$item['selling_price']}}" data-category="{{$item['category']['id']}}">Edit</button>
@@ -151,6 +160,7 @@
                 document.getElementById('scanModeBtn').classList.remove('hidden');
                 document.getElementById('scanModeBtn').classList.add('inline-flex');
                 document.getElementById('barcodeInput').classList.add('hidden');
+
                 const trigger = btn.dataset.trigger
                 const id = btn.dataset.id
                 const name = btn.dataset.name
@@ -192,7 +202,7 @@
         });
         let timer;
 
-        document.getElementById('barcode').addEventListener('input', function() {
+        document.getElementById('barcode_search').addEventListener('input', function() {
             clearTimeout(timer);
 
             timer = setTimeout(() => {

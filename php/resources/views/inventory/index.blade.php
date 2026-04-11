@@ -74,6 +74,7 @@
                     <thead>
                         <tr>
                             <th>Product</th>
+                            <th>Price</th>
                             <th>Category</th>
                             <th>Count</th>
                         </tr>
@@ -82,11 +83,12 @@
                         @forelse($stocks as $stock)
                             <tr>
                                 <td>{{$stock->product->name}}</td>
+                                <td>Php {{number_format($stock->product->price, 2)}}</td>
                                 <td>{{$stock->product->category->name}}</td>
                                 <td class="{{$stock->stocked_count <= 0 ? 'out' : ''}}">{{$stock->stocked_count}}</td>
                             </tr>
                             <tr>
-                                <td colspan="3">
+                                <td colspan="4">
                                     <table>
                                         <thead>
                                             <tr>

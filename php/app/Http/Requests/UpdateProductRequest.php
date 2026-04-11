@@ -27,8 +27,8 @@ class UpdateProductRequest extends FormRequest
             'image_path' => 'nullable|mimes:jpg,jpeg,png,gif|max:2048', // Optional image upload with size limit
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0|gte:price',
+            'price' => 'nullable|numeric|min:0',
+            'selling_price' => 'nullable|numeric|min:0|gte:price',
             // Special handling for the 'unique' rule on 'sku'
             'sku' => [
                 'nullable',

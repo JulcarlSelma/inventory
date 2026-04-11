@@ -11,6 +11,14 @@
             </ul>
         </x-card>
     @endif
+        
+    @if (session()->has('success'))
+        <x-card id="successCard" class="bg-green-500 py-2 px-3">
+            <ul>
+                <li class="text-white">{{ session()->get('success') }}</li>
+            </ul>
+        </x-card>
+    @endif
     <div class="flex flex-row gap-2">
         <x-card>
             <x-slot:header>
@@ -76,6 +84,9 @@
                                 Product name
                             </th>
                             <th scope="col" class="px-6 py-3 font-medium">
+                                Cost Price
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
                                 Category
                             </th>
                             <th scope="col" class="px-6 py-3 font-medium">
@@ -98,6 +109,7 @@
                                     <span>{{$item['product']['barcode']}}</span>
                                 </td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['name']}}</td>
+                                <td class="px-6 py-4 font-medium whitespace-nowrap">Php {{number_format($item['product']['price'], 2)}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['product']['category']['name']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_count']}}</td>
                                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{$item['stocked_count'] <= 0 ? 'True' : 'False'}}</td>
